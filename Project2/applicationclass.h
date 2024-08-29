@@ -18,13 +18,14 @@
 #include "fontshaderclass.h"
 #include "fontclass.h"
 #include "textclass.h"
+#include "fpsclass.h"
 
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
+const bool FULL_SCREEN = true;
+const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
 
@@ -41,16 +42,19 @@ public:
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame();
+	bool UpdateFps();
 
 private:
-	bool Render(float);
+	bool Render();
 
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
 	FontShaderClass* m_FontShader;
 	FontClass* m_Font;
-	TextClass* m_TextString1, * m_TextString2;
+	FpsClass* m_Fps;
+	TextClass* m_FpsString;
+	int m_previousFps;
 };
 
 #endif

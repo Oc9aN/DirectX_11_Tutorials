@@ -19,13 +19,14 @@
 #include "fontclass.h"
 #include "textclass.h"
 #include "fpsclass.h"
+#include "inputclass.h"
 
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
-const bool VSYNC_ENABLED = false;
+const bool FULL_SCREEN = false;
+const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
 
@@ -41,11 +42,12 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(InputClass*);
 	bool UpdateFps();
 
 private:
 	bool Render();
+	bool UpdateMouseStrings(int, int, bool);
 
 private:
 	D3DClass* m_Direct3D;
@@ -55,6 +57,7 @@ private:
 	FpsClass* m_Fps;
 	TextClass* m_FpsString;
 	int m_previousFps;
+	TextClass* m_MouseStrings;
 };
 
 #endif

@@ -13,6 +13,7 @@ ApplicationClass::ApplicationClass()
 	m_Fps = 0;
 	m_FpsString = 0;
 	m_MouseStrings = 0;
+	m_KeyboardString = 0;
 }
 
 
@@ -28,7 +29,7 @@ ApplicationClass::~ApplicationClass()
 
 bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-	char fpsString[32], mouseString1[32], mouseString2[32], mouseString3[32];;
+	char fpsString[32], mouseString1[32], mouseString2[32], mouseString3[32], keyboardString[32];
 	bool result;
 
 
@@ -111,7 +112,16 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// 키보드 입력
+	m_KeyboardString = new TextClass();
 
+	strcpy_s(keyboardString, "keyboard: ");
+
+	result = m_KeyboardString->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, 32, m_Font, keyboardString, 10, 100, 0.0f, 0.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -119,6 +129,14 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
+	// keyboardString오브젝트 제거
+	if (m_KeyboardString)
+	{
+		m_KeyboardString->Shutdown();
+		delete m_KeyboardString;
+		m_KeyboardString = 0;
+	}
+
 	// Release the text objects for the mouse strings.
 	if (m_MouseStrings)
 	{
@@ -201,6 +219,12 @@ bool ApplicationClass::Frame(InputClass* Input)
 		return false;
 	}
 
+	result = UpdateKeyboardStrings(Input);
+	if (!result)
+	{
+		return false;
+	}
+
 	// Update the frames per second each frame.
 	result = UpdateFps();
 	if (!result)
@@ -261,6 +285,15 @@ bool ApplicationClass::Render()
 		{
 			return false;
 		}
+	}
+
+	m_KeyboardString->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_FontShader->Render(m_Direct3D->GetDeviceContext(), m_KeyboardString->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix,
+		m_Font->GetTexture(), m_KeyboardString->GetPixelColor());
+	if (!result)
+	{
+		return false;
 	}
 
 	// Enable the Z buffer and disable alpha blending now that 2D rendering is complete.
@@ -388,6 +421,38 @@ bool ApplicationClass::UpdateMouseStrings(int mouseX, int mouseY, bool mouseDown
 
 	// Update the sentence vertex buffer with the new string information.
 	result = m_MouseStrings[2].UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 80, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool ApplicationClass::UpdateKeyboardStrings(InputClass* Input)
+{
+	char finalString[32], tempString[32];
+	bool result;
+
+	strcpy_s(finalString, "keyboard: ");
+	strcpy_s(tempString, "");
+
+	if (Input->IsKeyboardPressed(DIK_A))
+	{
+		strcpy_s(tempString, "A");
+	}
+	else if (Input->IsKeyboardPressed(DIK_S))
+	{
+		strcpy_s(tempString, "S");
+	}
+	else if (Input->IsKeyboardPressed(DIK_D))
+	{
+		strcpy_s(tempString, "D");
+	}
+
+	strcat_s(finalString, tempString);
+
+	result = m_KeyboardString->UpdateText(m_Direct3D->GetDeviceContext(), m_Font, finalString, 10, 100, 0.0f, 0.0f, 1.0f);
 	if (!result)
 	{
 		return false;

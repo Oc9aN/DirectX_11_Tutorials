@@ -226,6 +226,16 @@ bool InputClass::IsEscapePressed()
     return false;
 }
 
+bool InputClass::IsKeyboardPressed(int dikey)
+{
+    // 키보드 입력 테스트 asd값만 테스트
+    if (m_keyboardState[dikey] & 0x80)
+    {
+        return true;
+    }
+    return false;
+}
+
 void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
 {
     mouseX = m_mouseX;

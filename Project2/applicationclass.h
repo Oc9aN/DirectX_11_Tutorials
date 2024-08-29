@@ -48,6 +48,7 @@ public:
 private:
 	bool Render();
 	bool UpdateMouseStrings(int, int, bool);
+	bool UpdateKeyboardStrings(InputClass*);
 
 private:
 	D3DClass* m_Direct3D;
@@ -58,6 +59,7 @@ private:
 	TextClass* m_FpsString;
 	int m_previousFps;
 	TextClass* m_MouseStrings;
+	TextClass* m_KeyboardString;
 };
 
 #endif

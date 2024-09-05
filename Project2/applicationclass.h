@@ -20,6 +20,8 @@
 #include "textclass.h"
 #include "fpsclass.h"
 #include "inputclass.h"
+#include "bitmapclass.h"
+#include "textureshaderclass.h"
 
 
 /////////////
@@ -60,6 +62,8 @@ private:
 	int m_previousFps;
 	TextClass* m_MouseStrings;
 	TextClass* m_KeyboardString;
+	BitmapClass* m_Bitmap;
+	TextureShaderClass* m_TextureShader;
 };
 
 #endif

@@ -176,7 +176,7 @@ bool TextClass::UpdateText(ID3D11DeviceContext* deviceContext, FontClass* Font, 
     VertexType* verticesPtr;
 
     // Store the color of the sentence.
-    m_pixelColor = XMFLOAT4(red, green, blue, 0.5f);
+    m_pixelColor = XMFLOAT4(red, green, blue, 1.0f);
 
     // Get the number of letters in the sentence.
     numLetters = (int)strlen(text);

@@ -51,6 +51,12 @@
     <ClCompile Include="fpsclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="bitmapclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textureshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="applicationclass.h">
@@ -83,12 +89,24 @@
     <ClInclude Include="fpsclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bitmapclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="textureshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Engine\font.ps">
       <Filter>Engine</Filter>
     </None>
     <None Include="..\Engine\font.vs">
+      <Filter>Engine</Filter>
+    </None>
+    <None Include="..\Engine\texture.ps">
+      <Filter>Engine</Filter>
+    </None>
+    <None Include="..\Engine\texture.vs">
       <Filter>Engine</Filter>
     </None>
   </ItemGroup>

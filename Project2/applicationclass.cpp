@@ -14,6 +14,8 @@ ApplicationClass::ApplicationClass()
 	m_FpsString = 0;
 	m_MouseStrings = 0;
 	m_KeyboardString = 0;
+	m_Bitmap = 0;
+	m_TextureShader = 0;
 }
 
 
@@ -29,7 +31,7 @@ ApplicationClass::~ApplicationClass()
 
 bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-	char fpsString[32], mouseString1[32], mouseString2[32], mouseString3[32], keyboardString[32];
+	char fpsString[32], mouseString1[32], mouseString2[32], mouseString3[32], keyboardString[32], bitmapFilename[32];
 	bool result;
 
 
@@ -123,12 +125,49 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create and initialize the texture shader object.
+	m_TextureShader = new TextureShaderClass;
+
+	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create and init the bitmapclass obj
+	m_Bitmap = new BitmapClass;
+
+	strcpy_s(bitmapFilename, "../Engine/data/stone01.tga");
+
+	result = m_Bitmap->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), screenWidth, screenHeight, bitmapFilename, 50, 50);
+	if (!result)
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
 void ApplicationClass::Shutdown()
 {
+	// Release the bitmap object.
+	if (m_Bitmap)
+	{
+		m_Bitmap->Shutdown();
+		delete m_Bitmap;
+		m_Bitmap = 0;
+	}
+
+	// Release the texture shader object.
+	if (m_TextureShader)
+	{
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
+	}
+
 	// keyboardString오브젝트 제거
 	if (m_KeyboardString)
 	{
@@ -232,6 +271,10 @@ bool ApplicationClass::Frame(InputClass* Input)
 		return false;
 	}
 
+	// 마우스 커서 셋팅
+	m_Bitmap->SetBitmapSize(20, 20);
+	m_Bitmap->SetRenderLocation(mouseX, mouseY);
+
 	//Render the graphics scene
 	result = Render();
 	if (!result)
@@ -249,7 +292,7 @@ bool ApplicationClass::Render()
 
 
 	// Clear the buffers to begin the scene.
-	m_Direct3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
@@ -262,6 +305,20 @@ bool ApplicationClass::Render()
 	// Disable the Z buffer and enable alpha blending for 2D rendering.
 	m_Direct3D->TurnZBufferOff();
 	m_Direct3D->EnableAlphaBlending();
+
+	// 비트맵 이미지 랜더링
+	result = m_Bitmap->Render(m_Direct3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the bitmap with the texture shader.
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Bitmap->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
 
 	// Render the first text string using the font shader.
 	// 텍스트 랜더링

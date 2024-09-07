@@ -66,18 +66,10 @@ void ApplicationClass::Shutdown()
 
 bool ApplicationClass::Frame()
 {
-	static float rotation = 0.0f;
 	bool result;
 
-	// Update the rotation variable each frame.
-	rotation -= 0.0174532925f * 0.3f;
-	if (rotation < 0.0f)
-	{
-		rotation += 360.0f;
-	}
-
 	//Render the graphics scene
-	result = Render(rotation);
+	result = Render();
 	if (!result)
 	{
 		return false;
@@ -86,7 +78,7 @@ bool ApplicationClass::Frame()
 }
 
 
-bool ApplicationClass::Render(float rotation)
+bool ApplicationClass::Render()
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;

@@ -8,6 +8,8 @@ ApplicationClass::ApplicationClass()
 {
 	m_Direct3D = 0;
 	m_Camera = 0;
+	m_MultiTextureShader = 0;
+	m_Model = 0;
 }
 
 
@@ -23,6 +25,7 @@ ApplicationClass::~ApplicationClass()
 
 bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	char modelFilename[128], textureFilename1[128], textureFilename2[128];
 	bool result;
 
 	// Create and initialize the Direct3D object
@@ -38,7 +41,33 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -12.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+
+	// Create and initialize the multitexture shader object.
+	m_MultiTextureShader = new MultiTextureShaderClass;
+
+	result = m_MultiTextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the multitexture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Set the file name of the model.
+	strcpy_s(modelFilename, "../Engine/data/square.txt");
+
+	// Set the file name of the textures.
+	strcpy_s(textureFilename1, "../Engine/data/stone01.tga");
+	strcpy_s(textureFilename2, "../Engine/data/dirt01.tga");
+
+	// Create and initialize the model object.
+	m_Model = new ModelClass;
+
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename1, textureFilename2);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -46,7 +75,21 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
+	// Release the model object.
+	if (m_Model)
+	{
+		m_Model->Shutdown();
+		delete m_Model;
+		m_Model = 0;
+	}
 
+	// Release the multitexture shader object.
+	if (m_MultiTextureShader)
+	{
+		m_MultiTextureShader->Shutdown();
+		delete m_MultiTextureShader;
+		m_MultiTextureShader = 0;
+	}
 	// Release the camera object.
 	if (m_Camera)
 	{
@@ -94,6 +137,16 @@ bool ApplicationClass::Render()
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+
+	// Render the model using the multitexture shader.
+	m_Model->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_MultiTextureShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(0), m_Model->GetTexture(1));
+	if (!result)
+	{
+		return false;
+	}
 
 	//Present the rendered scene to the screen
 	m_Direct3D->EndScene();

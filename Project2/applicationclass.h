@@ -15,6 +15,8 @@
 //////////////////////
 #include "d3dclass.h"
 #include "cameraclass.h"
+#include "multitextureshaderclass.h"
+#include "modelclass.h"
 
 /////////////
 // GLOBALS //
@@ -44,6 +46,8 @@ private:
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
+	MultiTextureShaderClass* m_MultiTextureShader;
+	ModelClass* m_Model;
 };
 
 #endif

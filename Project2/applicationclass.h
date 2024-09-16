@@ -15,6 +15,7 @@
 //////////////////////
 #include "d3dclass.h"
 #include "cameraclass.h"
+#include "modelclass.h"
 
 /////////////
 // GLOBALS //
@@ -44,6 +45,7 @@ private:
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
+	ModelClass* m_Model;
 };
 
 #endif

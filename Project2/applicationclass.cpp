@@ -8,6 +8,8 @@ ApplicationClass::ApplicationClass()
 {
 	m_Direct3D = 0;
 	m_Camera = 0;
+	m_LightMapShader = 0;
+	m_Model = 0;
 }
 
 
@@ -23,6 +25,7 @@ ApplicationClass::~ApplicationClass()
 
 bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
+	char modelFilename[128], textureFilename1[128], textureFilename2[128];
 	bool result;
 
 	// Create and initialize the Direct3D object
@@ -38,7 +41,32 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera = new CameraClass;
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -12.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
+	m_Camera->Render();
+
+	// Create and initialize the light map shader object.
+	m_LightMapShader = new LightMapShaderClass;
+
+	result = m_LightMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light map shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	strcpy_s(modelFilename, "../Engine/data/square.txt");
+
+	strcpy_s(textureFilename1, "../Engine/data/stone01.tga");
+	strcpy_s(textureFilename2, "../Engine/data/light01.tga");
+
+	// Create and initialize the model object.
+	m_Model = new ModelClass;
+
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext(), modelFilename, textureFilename1, textureFilename2);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -64,9 +92,14 @@ void ApplicationClass::Shutdown()
 }
 
 
-bool ApplicationClass::Frame()
+bool ApplicationClass::Frame(InputClass* Input)
 {
 	bool result;
+
+	if (Input->IsEscapePressed())
+	{
+		return false;
+	}
 
 	//Render the graphics scene
 	result = Render();
@@ -94,6 +127,15 @@ bool ApplicationClass::Render()
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+
+	m_Model->Render(m_Direct3D->GetDeviceContext());
+
+	result = m_LightMapShader->Render(m_Direct3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(0), m_Model->GetTexture(1));
+	if (!result)
+	{
+		return false;
+	}
 
 	//Present the rendered scene to the screen
 	m_Direct3D->EndScene();

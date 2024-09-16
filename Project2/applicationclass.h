@@ -14,7 +14,10 @@
 // MY CLASS INCLUDE //
 //////////////////////
 #include "d3dclass.h"
+#include "inputclass.h"
 #include "cameraclass.h"
+#include "modelclass.h"
+#include "lightmapshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -36,7 +39,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(InputClass*);
 
 private:
 	bool Render();
@@ -44,6 +47,8 @@ private:
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
+	LightMapShaderClass* m_LightMapShader;
+	ModelClass* m_Model;
 };
 
 #endif

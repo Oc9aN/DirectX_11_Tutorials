@@ -12,6 +12,7 @@
 #include "inputclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
+#include "alphamapshaderclass.h"
 
 
 /////////////
@@ -44,6 +45,7 @@ private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
+	AlphaMapShaderClass* m_AlphaMapShader;
 };
 
 #endif

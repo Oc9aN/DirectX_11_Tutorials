@@ -5,17 +5,14 @@
 #define _APPLICATIONCLASS_H_
 
 
-//////////////
-// INCLUDES //
-//////////////
-#include <windows.h>
-
-//////////////////////
-// MY CLASS INCLUDE //
-//////////////////////
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
 #include "d3dclass.h"
+#include "inputclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
+
 
 /////////////
 // GLOBALS //
@@ -24,6 +21,7 @@ const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.3f;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ApplicationClass
@@ -37,7 +35,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(InputClass*);
 
 private:
 	bool Render();

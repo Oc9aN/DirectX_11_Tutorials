@@ -1,0 +1,54 @@
+// register
+Texture2D shaderTexture1 : register(t0);
+Texture2D shaderTexture2 : register(t1);
+SamplerState SampleType : register(s0);
+
+// cbuffer
+cbuffer LightBuffer
+{
+	float4 diffuseColor;
+	float3 lightDirection;
+	float padding;
+};
+
+// types
+struct PixelInputType
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+};
+
+float4 NormalMapPixelShader(PixelInputType input) : SV_TARGET
+{
+	float4 textureColor;
+	float4 bumpMap;		// normalmap
+	float3 bumpNormal;
+	float3 lightDir;
+	float lightIntensity;
+	float4 color;
+
+	// sampling
+	textureColor = shaderTexture1.Sample(SampleType, input.tex);
+	bumpMap = shaderTexture2.Sample(SampleType, input.tex);
+
+	// 노말맵의 값의 범위를 변환해줌 0.0 -> -1.0
+	// 노말의 방향은 -1.0이 될 수 있기때문
+	bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+	// 범프맵에 대해서 스케일과 위치이동은 계산안함
+	bumpNormal = (bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal);
+	bumpNormal = normalize(bumpNormal);
+
+	lightDir = -lightDirection;
+
+	lightIntensity = saturate(dot(bumpNormal, lightDir));
+
+	color = saturate(diffuseColor * lightIntensity);
+
+	color = color * textureColor;
+
+	return color;
+}

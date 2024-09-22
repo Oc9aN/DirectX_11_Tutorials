@@ -11,7 +11,9 @@
 #include "d3dclass.h"
 #include "inputclass.h"
 #include "cameraclass.h"
+#include "normalmapshaderclass.h"
 #include "modelclass.h"
+#include "lightclass.h"
 
 
 /////////////
@@ -38,12 +40,14 @@ public:
 	bool Frame(InputClass*);
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
+	NormalMapShaderClass* m_NormalMapShader;
 	ModelClass* m_Model;
+	LightClass* m_Light;
 };
 
 #endif

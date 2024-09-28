@@ -57,7 +57,7 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the file name of the model.
-    strcpy_s(modelFilename, "../Engine/data/cube.txt");
+    strcpy_s(modelFilename, "../Engine/data/sphere.txt");
 
     // Set the file name of the textures.
     strcpy_s(textureFilename1, "../Engine/data/stone01.tga");

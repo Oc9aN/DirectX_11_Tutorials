@@ -329,6 +329,7 @@ void ModelClass::CalculateModelVectors()
 
 
 	// Calculate the number of faces in the model.
+	// 모델의 표면 수를 구함 -> 삼각형 폴리곤의 수
 	faceCount = m_vertexCount / 3;
 
 	// Initialize the index to the model data.
@@ -338,6 +339,7 @@ void ModelClass::CalculateModelVectors()
 	for (i = 0; i < faceCount; i++)
 	{
 		// Get the three vertices for this face from the model.
+		// 한 표면을 이루는 점 3개을 가져온다
 		vertex1.x = m_model[index].x;
 		vertex1.y = m_model[index].y;
 		vertex1.z = m_model[index].z;
